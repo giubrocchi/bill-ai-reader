@@ -1,0 +1,31 @@
+services:
+  mysql:
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootroot
+      MYSQL_DATABASE: readings
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - 3307:3306
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./reading.sql:/docker-entrypoint-initdb.d/reading.sql
+
+  app:
+    depends_on:
+      - mysql
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - 3000:3000
+    environment:
+      MYSQL_ROOT_PASSWORD: rootroot
+      MYSQL_DATABASE: readings
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+
+volumes:
+  mysql:
